@@ -13,6 +13,7 @@
 #
 
 import boto3, botocore
+from time import time
 
 ## Set the values below and use Lambda Scheduled Event as an Event Source
 S3BCUKET=''
@@ -72,7 +73,7 @@ def lambda_handler(event, context):
                                     logFileData += logFile['LogFileData']
                             byteData = str.encode(logFileData)
                             try:
-                                    objectName = "%s-%s-%s" % (S3BucketPrefix , RDSInstanceName , dbLog['LogFileName'])
+                                    objectName = "%s-%s-%s-%d" % (S3BucketPrefix , RDSInstanceName , dbLog['LogFileName'], time())
                                     S3response = S3client.put_object(Bucket=S3BucketName, Key=objectName,Body=byteData)
                             except botocore.exceptions.ClientError as e:
                                     return "Error writting object to S3 bucket, S3 ClientError: " + e.response['Error']['Message']
